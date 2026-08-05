@@ -189,7 +189,7 @@ header{flex-wrap:nowrap}
   .bar{gap:1rem;padding:.5rem 1.05rem}
   .hdr-right{gap:.4rem}
   .dkh{padding:.2rem;gap:.05rem}
-  .dkh .dk__s{width:2rem;height:2rem;border-radius:.64rem}
+  .dkh .dk__s{width:2rem;height:2rem;border-radius:50%}
   .dkh .dk__s svg{width:1rem;height:1rem}
   .dkh .dk__i{padding:.14rem}
   .lang button{padding:.36rem .58rem;font-size:.62rem}
@@ -413,7 +413,7 @@ header nav a:hover{opacity:1}
 /* ---- glass social dock ---- */
 .dk__k{display:block;margin-top:2.6rem}
 .dk{display:inline-flex;align-items:center;gap:.35rem;margin-top:.9rem;
-  padding:.7rem;border-radius:1.6rem}
+  padding:.7rem;border-radius:999px}
 /* every glass control in the header shares one height so the row lines up.
    The bar keeps its own natural size; the others are matched to it. */
 :root{--hdr-h:3.75rem}
@@ -428,10 +428,9 @@ header{align-items:center}
 .dkh .dk__s svg{width:1.08rem;height:1.08rem}
 
 /* ---- compact variant that lives in the header bar ---- */
-.dkh{margin-top:0;gap:.1rem;padding:.26rem;border-radius:1.1rem}
+.dkh{margin-top:0;gap:.1rem;padding:.26rem;border-radius:999px}
 .dkh .dk__i{padding:.2rem}
-.dkh .dk__s{width:2.05rem;height:2.05rem;border-radius:.68rem}
-.dkh:hover .dk__s{border-radius:.8rem}
+.dkh .dk__s{width:2.05rem;height:2.05rem;border-radius:50%}
 .dkh .dk__s svg{width:1.02rem;height:1.02rem}
 .dkh .dk__t{display:none}
 @media(max-width:1080px){.dkh{display:none}}
@@ -441,13 +440,13 @@ header{align-items:center}
 @media(max-width:420px){
   .dkm{gap:.05rem;padding:.45rem}
   .dkm .dk__i{padding:.4rem .24rem .34rem}
-  .dkm .dk__s{width:2.5rem;height:2.5rem;border-radius:.8rem}
+  .dkm .dk__s{width:2.5rem;height:2.5rem;border-radius:50%}
   .dkm .dk__s svg{width:1.2rem;height:1.2rem}
 }
 .dk__i{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:.4rem;
-  padding:.55rem .5rem .45rem;border-radius:1.1rem;text-decoration:none;color:var(--espresso);
+  padding:.55rem .5rem .45rem;border-radius:999px;text-decoration:none;color:var(--espresso);
   transition:transform .7s var(--spring),color .45s var(--ease),background .45s var(--ease)}
-.dk__s{display:grid;place-items:center;width:3.05rem;height:3.05rem;border-radius:1rem;
+.dk__s{display:grid;place-items:center;width:3.05rem;height:3.05rem;border-radius:50%;
   background:linear-gradient(150deg,rgba(255,255,255,.7),rgba(231,198,194,.55));
   box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 8px 18px -12px rgba(69,59,54,.5);
   transition:transform .7s var(--spring),box-shadow .5s var(--ease),background .45s var(--ease)}
