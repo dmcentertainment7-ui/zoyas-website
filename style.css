@@ -65,16 +65,16 @@ p{margin-bottom:.9rem;max-inline-size:62ch;text-wrap:pretty}
              inset -1px -1px 1px 1px rgba(255,255,255,.45)}
 
 /* every glass surface reacts — grows, lifts and brightens on the spring curve */
-.glass{transition:padding .7s var(--spring),border-radius .7s var(--spring),
-  box-shadow .7s var(--spring),transform .7s var(--spring),background .5s var(--ease)}
+.glass{transition:box-shadow .7s var(--spring),transform .7s var(--spring),
+  background .5s var(--ease)}
 .glass:hover{background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.24) 42%,rgba(255,255,255,.46))}
-a.glass:hover,button.glass:hover,.dk:hover,.lang:hover,.menubtn:hover{
+a.glass:hover,button.glass:hover,.menubtn:hover{
   transform:translateY(-1px) scale(1.015)}
 
-/* the header bar itself */
-.bar{transition:padding .7s var(--spring),border-radius .7s var(--spring),
-  box-shadow .7s var(--spring),transform .7s var(--spring),background .5s var(--ease)}
-.bar:hover{padding:.72rem 1.7rem;border-radius:2.2rem;transform:translateY(-1px)}
+/* The header bar keeps the glass look but never animates: growing its padding
+   and easing border-radius from 999px to 2.2rem turned the pill into a box on
+   hover. Only the things INSIDE it react. */
+.bar{transition:background .5s var(--ease)}
 /* the wordmark inside it */
 .bar>a:first-child{display:inline-flex;padding:.28rem .55rem;border-radius:14px;
   transition:transform .7s var(--spring),background .45s var(--ease)}
@@ -93,10 +93,8 @@ header nav ul a:hover,header nav ul a:focus-visible{color:var(--copper);outline:
 /* glass buttons: .btn declares its own transition below, so restate the
    spring properties here or they get dropped */
 .btn.glass{transition:color .5s var(--ease),background .5s var(--ease),
-  padding .7s var(--spring),border-radius .7s var(--spring),
   transform .7s var(--spring),box-shadow .7s var(--spring)}
 .btn.glass:hover{transform:translateY(-2px) scale(1.025);
-  padding-left:2.3rem;padding-right:2.3rem;
   box-shadow:inset 3px 3px .5px -3px rgba(255,255,255,.95),
     inset -3px -3px .5px -3px rgba(255,255,255,.75),
     inset 0 0 8px 8px rgba(255,255,255,.18),
@@ -431,7 +429,6 @@ header{align-items:center}
 
 /* ---- compact variant that lives in the header bar ---- */
 .dkh{margin-top:0;gap:.1rem;padding:.26rem;border-radius:1.1rem}
-.dkh:hover{padding:.4rem;border-radius:1.3rem}
 .dkh .dk__i{padding:.2rem}
 .dkh .dk__s{width:2.05rem;height:2.05rem;border-radius:.68rem}
 .dkh:hover .dk__s{border-radius:.8rem}
@@ -447,7 +444,6 @@ header{align-items:center}
   .dkm .dk__s{width:2.5rem;height:2.5rem;border-radius:.8rem}
   .dkm .dk__s svg{width:1.2rem;height:1.2rem}
 }
-.dk:hover{padding:.95rem;border-radius:2rem}
 .dk__i{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:.4rem;
   padding:.55rem .5rem .45rem;border-radius:1.1rem;text-decoration:none;color:var(--espresso);
   transition:transform .7s var(--spring),color .45s var(--ease),background .45s var(--ease)}
