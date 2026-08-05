@@ -275,26 +275,31 @@ footer .tag{color:rgba(245,240,234,.62);font-size:.82rem;margin-top:1rem;max-inl
 @media(max-width:1080px){.menubtn{display:inline-flex}}
 @media(min-width:1081px){.mobnav{display:none}}
 
-/* ---------------- photo cursor trail (desktop, fine pointer only) ---------------- */
+/* ---------------- photo cursor trail (site-wide, desktop, fine pointer) ----------------
+   Fixed overlay so the photos ride above every section instead of being buried behind
+   opaque backgrounds. pointer-events:none on the layer AND the images, so nothing on the
+   page can be blocked from being clicked. Sits under the header (90) and book bar (88). */
+#ptrail{position:fixed;inset:0;z-index:70;pointer-events:none;overflow:hidden;contain:strict}
+#ptrail img{position:absolute;top:0;left:0;width:10.5rem;height:13.5rem;object-fit:cover;
+  opacity:0;transform:translate(-50%,-50%) scale(.45) rotate(var(--r,0deg));
+  transition:transform 760ms cubic-bezier(.19,1,.22,1),opacity 760ms cubic-bezier(.19,1,.22,1);
+  will-change:transform,opacity;pointer-events:none;
+  box-shadow:0 24px 60px -28px rgba(69,59,54,.45)}
+#ptrail img[data-on="1"]{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(var(--r,0deg))}
+@media(hover:none),(max-width:900px){#ptrail{display:none}}
+
+/* the interlude band keeps its line; the trail now runs everywhere */
 .trail{position:relative;overflow:hidden;background:var(--rose);border-top:0;
-  min-height:clamp(22rem,52vh,34rem);display:grid;place-content:center;text-align:center;
+  min-height:clamp(18rem,42vh,26rem);display:grid;place-content:center;text-align:center;
   padding:clamp(3rem,8vh,6rem) var(--gutter)}
 .trail__line{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:400;
   font-size:clamp(1.6rem, 1.1rem + 2.4vw, 3.4rem);line-height:1.1;letter-spacing:-.02em;
-  color:var(--espresso);position:relative;z-index:20;max-inline-size:22ch;margin:0 auto;
-  mix-blend-mode:multiply;pointer-events:none}
-.trail__hint{position:relative;z-index:20;margin-top:1.6rem;pointer-events:none;
+  color:var(--espresso);position:relative;z-index:2;max-inline-size:22ch;margin:0 auto;
+  pointer-events:none}
+.trail__hint{position:relative;z-index:2;margin-top:1.6rem;pointer-events:none;
   font:500 var(--t-label)/1 'Montserrat',sans-serif;letter-spacing:.24em;text-transform:uppercase;
   color:var(--copper);opacity:.65}
-.trail img{position:absolute;top:0;left:0;width:11rem;height:14rem;object-fit:cover;z-index:2;
-  opacity:0;transform:translate(-50%,-50%) scale(.4) rotate(var(--r,0deg));
-  transition:transform 700ms cubic-bezier(.19,1,.22,1),opacity 700ms cubic-bezier(.19,1,.22,1);
-  will-change:transform,opacity;pointer-events:none}
-.trail img[data-on="1"]{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(var(--r,0deg))}
-@media(hover:none),(max-width:900px){
-  .trail{min-height:auto;padding:clamp(3rem,8vh,5rem) var(--gutter)}
-  .trail img{display:none} .trail__hint{display:none}
-}
+@media(hover:none),(max-width:900px){.trail__hint{display:none}}
 
 /* hero image grows with natural scroll — no scroll hijacking */
 .hero__img{will-change:transform}

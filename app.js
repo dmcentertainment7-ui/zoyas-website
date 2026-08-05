@@ -172,29 +172,30 @@
     addEventListener('keydown', function(e){ if (e.key === 'Escape') setMenu(false); });
   }
 
-  /* ---- photo cursor trail ---- */
-  var trail = document.getElementById('trail');
-  if (trail && !mq.matches && matchMedia('(hover: hover) and (pointer: fine)').matches){
-    var tImgs = [].slice.call(trail.querySelectorAll('img')),
-        tIdx = 0, tLast = {x: 0, y: 0}, tTimers = [];
-    var threshold = function(){ return Math.max(innerWidth / 22, 60); };
-    trail.addEventListener('pointermove', function(e){
-      var dx = e.clientX - tLast.x, dy = e.clientY - tLast.y;
-      if (Math.sqrt(dx*dx + dy*dy) < threshold()) return;
-      tLast = {x: e.clientX, y: e.clientY};
-      var r = trail.getBoundingClientRect(),
-          img = tImgs[tIdx % tImgs.length],
-          slot = tIdx % tImgs.length;
-      img.style.left = (e.clientX - r.left) + 'px';
-      img.style.top  = (e.clientY - r.top)  + 'px';
-      img.style.zIndex = String(2 + (tIdx % tImgs.length));
+  /* ---- photo cursor trail: site-wide, fixed layer, never blocks a click ---- */
+  var pt = document.getElementById('ptrail');
+  if (pt && !mq.matches && matchMedia('(hover: hover) and (pointer: fine)').matches){
+    var pImgs = [].slice.call(pt.querySelectorAll('img')),
+        pIdx = 0, pLast = null, pTimers = [];
+    var pGap = function(){ return Math.max(innerWidth / 16, 90); };
+    addEventListener('pointermove', function(e){
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      if (pLast === null){ pLast = {x: e.clientX, y: e.clientY}; return; }
+      var dx = e.clientX - pLast.x, dy = e.clientY - pLast.y;
+      if (Math.sqrt(dx*dx + dy*dy) < pGap()) return;
+      pLast = {x: e.clientX, y: e.clientY};
+      var slot = pIdx % pImgs.length, img = pImgs[slot];
+      img.style.left = e.clientX + 'px';
+      img.style.top  = e.clientY + 'px';
+      img.style.zIndex = String(slot + 1);
       img.dataset.on = '1';
-      clearTimeout(tTimers[slot]);
-      tTimers[slot] = setTimeout(function(){ img.dataset.on = '0'; }, 900);
-      tIdx++;
-    });
-    trail.addEventListener('pointerleave', function(){
-      tImgs.forEach(function(im){ im.dataset.on = '0'; });
+      clearTimeout(pTimers[slot]);
+      pTimers[slot] = setTimeout(function(){ img.dataset.on = '0'; }, 850);
+      pIdx++;
+    }, {passive: true});
+    // clear everything when the cursor leaves the window entirely
+    document.addEventListener('mouseleave', function(){
+      pImgs.forEach(function(im){ im.dataset.on = '0'; });
     });
   }
 
