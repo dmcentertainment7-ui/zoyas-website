@@ -95,12 +95,40 @@
   document.querySelectorAll('[data-i18n-ph]').forEach(function(el){ ENPH[el.dataset.i18nPh] = el.getAttribute('placeholder'); });
   function tr(k){ return cur === 'mn' ? (DICT[k] != null ? DICT[k] : EN[k]) : EN[k]; }
 
-  function setLang(l){
+  /* ---- word-by-word reveal, the TextEffect 'blur' preset done natively.
+     Only panes actually on screen are animated: off-screen copy just swaps,
+     which keeps a full retranslation cheap however long the page gets. ---- */
+  var teMo = matchMedia('(prefers-reduced-motion: reduce)');
+  function teReveal(el, start){
+    if (teMo.matches) return start;
+    var r = el.getBoundingClientRect();
+    if (r.bottom < -40 || r.top > innerHeight + 40 || !r.width) return start;
+    var walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), nodes = [], n;
+    while ((n = walk.nextNode())) if (n.nodeValue.trim()) nodes.push(n);
+    var i = start;
+    nodes.forEach(function(node){
+      var frag = document.createDocumentFragment();
+      node.nodeValue.split(/(\s+)/).forEach(function(w){
+        if (!w) return;
+        if (!w.trim()){ frag.appendChild(document.createTextNode(w)); return; }
+        var s = document.createElement('span');
+        s.className = 'te__w'; s.style.setProperty('--i', i++); s.textContent = w;
+        frag.appendChild(s);
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+    return i;
+  }
+
+  function setLang(l, animate){
     cur = l;
     document.documentElement.lang = (l === 'mn' ? 'mn' : 'en');
+    var step = 0;
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var v = (l === 'mn') ? DICT[el.dataset.i18n] : EN[el.dataset.i18n];
-      if (v != null) el.innerHTML = v;
+      if (v == null) return;
+      el.innerHTML = v;
+      if (animate) step = teReveal(el, step);
     });
     document.querySelectorAll('[data-i18n-ph]').forEach(function(el){
       var v = (l === 'mn') ? DICT[el.dataset.i18nPh] : ENPH[el.dataset.i18nPh];
@@ -109,11 +137,19 @@
     document.querySelectorAll('.lang button').forEach(function(b){
       b.setAttribute('aria-pressed', String(b.dataset.lang === l));
     });
+    document.querySelectorAll('.lang').forEach(function(w){
+      w.classList.toggle('mn', l === 'mn');
+      if (animate){                       /* restart the squash on every throw */
+        w.classList.remove('go'); void w.offsetWidth; w.classList.add('go');
+      }
+    });
     buildOptions();
     try { localStorage.setItem('zw_lang', l); } catch(e){}
   }
   document.querySelectorAll('.lang button').forEach(function(b){
-    b.addEventListener('click', function(){ setLang(b.dataset.lang); });
+    b.addEventListener('click', function(){
+      if (b.dataset.lang !== cur) setLang(b.dataset.lang, true);
+    });
   });
 
   var form = document.getElementById('subscribe');
@@ -253,6 +289,85 @@
     });
   }
 
+  /* ---- liquid glass: a lens that trails the cursor across any glass pane.
+     It is spring-driven, so it lags, overshoots and settles, and it squashes
+     along its direction of travel — that lag is what reads as liquid. ---- */
+  var lens = document.getElementById('lqlens');
+  if (lens && !mq.matches && matchMedia('(hover: hover) and (pointer: fine)').matches){
+    var lbody = lens.querySelector('b'),
+        S = 0,                       /* lens diameter, measured once it is laid out */
+        host = null,                 /* the glass pane the cursor is currently over */
+        tx = -999, ty = -999,        /* where the cursor is */
+        lx = -999, ly = -999,        /* where the droplet actually is */
+        vx = 0, vy = 0, raf = 0, idle = 0;
+
+    var radiusOf = function(el){
+      var r = getComputedStyle(el).borderTopLeftRadius;
+      return (r && r !== '0px') ? r : '999px';
+    };
+
+    var step = function(){
+      raf = 0;
+      var dx = tx - lx, dy = ty - ly;
+      /* spring toward the cursor, then bleed off the velocity */
+      vx = (vx + dx * 0.22) * 0.68;
+      vy = (vy + dy * 0.22) * 0.68;
+      lx += vx; ly += vy;
+
+      var sp = Math.sqrt(vx * vx + vy * vy),
+          st = Math.min(sp / 42, 0.42),                 /* how far it stretches */
+          ang = sp > 0.4 ? Math.atan2(vy, vx) * 57.2958 : 0;
+      lens.style.transform = 'translate3d(' + lx.toFixed(1) + 'px,' + ly.toFixed(1) + 'px,0)';
+      lbody.style.transform = 'rotate(' + ang.toFixed(1) + 'deg) scale('
+        + (1 + st).toFixed(3) + ',' + (1 - st * 0.62).toFixed(3) + ')';
+
+      if (host){
+        /* clip to the pane, in the wrapper's own (untransformed) coordinates */
+        var r = host.getBoundingClientRect(), h = S / 2;
+        lens.style.clipPath = 'inset('
+          + Math.max(0, r.top    - (ly - h)).toFixed(1) + 'px '
+          + Math.max(0, (lx + h) - r.right ).toFixed(1) + 'px '
+          + Math.max(0, (ly + h) - r.bottom).toFixed(1) + 'px '
+          + Math.max(0, r.left   - (lx - h)).toFixed(1) + 'px round ' + radiusOf(host) + ')';
+      }
+      /* keep running while it is still settling, then stop burning frames */
+      if (host || sp > 0.35){ idle = 0; raf = requestAnimationFrame(step); }
+      else if (++idle < 30) raf = requestAnimationFrame(step);
+    };
+    var kick = function(){ if (!raf) raf = requestAnimationFrame(step); };
+
+    addEventListener('pointermove', function(e){
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      if (!S) S = lens.offsetWidth || 152;
+      var el = document.elementFromPoint(e.clientX, e.clientY),
+          g  = el && el.closest ? el.closest('.glass') : null;
+      if (g !== host){
+        if (host) host.style.removeProperty('--mx'), host.style.removeProperty('--my');
+        host = g;
+        lens.classList.toggle('on', !!g);
+        if (g){                       /* drop it in place instead of flying across */
+          if (lx < -900){ lx = e.clientX; ly = e.clientY; vx = vy = 0; }
+        } else {
+          lens.style.clipPath = 'none';
+        }
+      }
+      tx = e.clientX; ty = e.clientY;
+      if (g){
+        var r = g.getBoundingClientRect();
+        g.style.setProperty('--mx', (((e.clientX - r.left) / r.width)  * 100).toFixed(1) + '%');
+        g.style.setProperty('--my', (((e.clientY - r.top)  / r.height) * 100).toFixed(1) + '%');
+      }
+      kick();
+    }, {passive: true});
+
+    var drop = function(){
+      if (host) host.style.removeProperty('--mx'), host.style.removeProperty('--my');
+      host = null; lens.classList.remove('on'); kick();
+    };
+    document.addEventListener('mouseleave', drop);
+    addEventListener('scroll', drop, {passive: true});
+  }
+
   /* ---- location card: tilts to the cursor, opens into a street plan ---- */
   var lmc = document.querySelector('.lmap__c');
   if (lmc){
@@ -370,6 +485,6 @@
   }
 
   try { cur = localStorage.getItem('zw_lang') || 'en'; } catch(e){}
-  setLang(cur);
+  setLang(cur, false);
 
 })();

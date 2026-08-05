@@ -60,15 +60,50 @@ p{margin-bottom:.9rem;max-inline-size:62ch;text-wrap:pretty}
    reference stacks on top renders dark on repaint in Chrome, so the
    refraction stays on backdrop-filter where it is stable. */
 .glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
-  background:rgba(255,255,255,.16);
+  background:
+    radial-gradient(9rem 9rem at var(--mx,-30%) var(--my,-30%),
+      rgba(255,255,255,.36),rgba(255,255,255,.10) 46%,rgba(255,255,255,0) 72%),
+    rgba(255,255,255,.16);
   box-shadow:inset 2px 2px 1px 0 rgba(255,255,255,.5),
              inset -1px -1px 1px 1px rgba(255,255,255,.45)}
+
+/* ---- the travelling lens: one element, clipped to whichever glass the
+   cursor is over. It lags, overshoots and stretches with the direction of
+   travel, which is what makes it read as liquid rather than as a hover state. */
+/* the wrapper only ever translates, so the clip stays square with the pane;
+   the child carries the rotation and squash so the droplet can stretch */
+#lqlens{position:fixed;left:0;top:0;width:9.5rem;height:9.5rem;margin:-4.75rem 0 0 -4.75rem;
+  pointer-events:none;z-index:96;opacity:0;will-change:transform,clip-path;
+  transform:translate3d(-999px,-999px,0);transition:opacity .38s var(--ease)}
+#lqlens.on{opacity:1}
+/* b carries the stretch AND clips: without overflow:hidden the SVG filter
+   region paints the refracted backdrop as a square patch around the droplet */
+#lqlens b{display:block;position:absolute;inset:0;border-radius:50%;
+  overflow:hidden;isolation:isolate;will-change:transform}
+/* rim + meniscus, so the droplet still reads as liquid over flat colour
+   where there is nothing behind it for the refraction to bend */
+#lqlens i{display:block;position:absolute;inset:0;border-radius:50%;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(255,255,255,0) 54%,
+      rgba(255,255,255,.34) 76%,rgba(255,255,255,0) 90%),
+    radial-gradient(circle at 36% 30%,
+      rgba(255,255,255,.62),rgba(255,255,255,.11) 46%,rgba(255,255,255,0) 71%);
+  box-shadow:inset 0 0 26px rgba(255,255,255,.45),
+             inset 0 3px 7px rgba(255,255,255,.72),
+             inset 0 -7px 13px rgba(69,59,54,.11),
+             inset 0 0 4px rgba(255,255,255,.6)}
+@supports ((backdrop-filter:url(#lgb)) or (-webkit-backdrop-filter:url(#lgb))){
+  #lqlens i{-webkit-backdrop-filter:url(#lgb) blur(1px) brightness(1.07) saturate(1.35);
+            backdrop-filter:url(#lgb) blur(1px) brightness(1.07) saturate(1.35)}
+}
+@media(max-width:760px){#lqlens{display:none}}
+@media(prefers-reduced-motion:reduce){#lqlens{display:none}}
 /* every glass surface reacts — grows, lifts and brightens on the spring curve */
 .glass{transition:padding .7s var(--spring),border-radius .7s var(--spring),
   box-shadow .7s var(--spring),transform .7s var(--spring),background .5s var(--ease)}
 .glass:hover{background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.24) 42%,rgba(255,255,255,.46))}
 a.glass:hover,button.glass:hover,.dk:hover,.lang:hover,.menubtn:hover{
-  transform:translateY(-2px) scale(1.03)}
+  transform:translateY(-1px) scale(1.015)}
 
 /* the header bar itself */
 .bar{transition:padding .7s var(--spring),border-radius .7s var(--spring),
@@ -83,7 +118,7 @@ header nav ul a{display:inline-block;padding:.42rem .78rem;border-radius:999px;
   transition:color .4s var(--ease),background .45s var(--ease),
     transform .7s var(--spring),box-shadow .6s var(--spring)}
 header nav ul a:hover,header nav ul a:focus-visible{color:var(--copper);outline:none;
-  background:rgba(255,255,255,.55);transform:translateY(-2px) scale(1.04);
+  background:rgba(255,255,255,.55);transform:translateY(-2px) scale(1.02);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 16px -11px rgba(69,59,54,.55)}
 /* language toggle */
 .lang button{transition:color .4s var(--ease),background .45s var(--ease),transform .6s var(--spring)}
@@ -94,7 +129,7 @@ header nav ul a:hover,header nav ul a:focus-visible{color:var(--copper);outline:
 .btn.glass{transition:color .5s var(--ease),background .5s var(--ease),
   padding .7s var(--spring),border-radius .7s var(--spring),
   transform .7s var(--spring),box-shadow .7s var(--spring)}
-.btn.glass:hover{transform:translateY(-3px) scale(1.05);
+.btn.glass:hover{transform:translateY(-2px) scale(1.025);
   padding-left:2.3rem;padding-right:2.3rem;
   box-shadow:inset 3px 3px .5px -3px rgba(255,255,255,.95),
     inset -3px -3px .5px -3px rgba(255,255,255,.75),
@@ -180,11 +215,40 @@ header{position:fixed;top:0;left:0;right:0;z-index:90;padding:.85rem var(--gutte
 header nav ul{display:flex;gap:1.5rem;list-style:none;font-size:.82rem}
 header nav a{color:var(--espresso);opacity:.78;transition:opacity .4s var(--ease)}
 header nav a:hover{opacity:1}
-.lang{display:flex;border-radius:999px;padding:.28rem}
-.lang button{border:0;background:none;cursor:pointer;padding:.42rem .72rem;border-radius:999px;
+.lang{position:relative;display:flex;border-radius:999px;padding:.28rem}
+.lang button{position:relative;z-index:4;border:0;background:none;cursor:pointer;
+  padding:.42rem .72rem;border-radius:999px;flex:1 1 50%;
   font:500 .66rem/1 'Montserrat',sans-serif;letter-spacing:.15em;color:var(--espresso);opacity:.55;
-  transition:all .45s var(--ease)}
-.lang button[aria-pressed="true"]{background:var(--espresso);color:var(--ivory);opacity:1}
+  transition:color .42s var(--ease),opacity .42s var(--ease)}
+.lang button[aria-pressed="true"]{color:var(--ivory);opacity:1}
+/* the knob: it slides on the spring curve and squashes on the way, so the
+   switch flows across rather than snapping like a checkbox */
+/* scoped past .glass>* , which would otherwise force this back to static flow */
+.lang>.lang__p{position:absolute;z-index:3;top:.28rem;bottom:.28rem;left:.28rem;
+  width:calc(50% - .28rem);border-radius:999px;pointer-events:none;
+  background:linear-gradient(140deg,var(--copper-l),var(--copper) 58%,#7C4A31);
+  box-shadow:0 8px 16px -10px rgba(69,59,54,.7),
+             inset 0 1px 0 rgba(255,255,255,.42),
+             inset 0 -1px 2px rgba(69,59,54,.28);
+  transform:translate3d(0,0,0);transform-origin:50% 50%;
+  transition:transform .66s var(--spring)}
+.lang.mn>.lang__p{transform:translate3d(100%,0,0)}
+.lang.go>.lang__p{animation:langFlow .66s var(--ease)}
+@keyframes langFlow{
+  0%  {scale:1 1}
+  30% {scale:1.16 .86}
+  62% {scale:.95 1.05}
+  100%{scale:1 1}}
+@media(prefers-reduced-motion:reduce){
+  .lang>.lang__p{transition-duration:1ms}.lang.go>.lang__p{animation:none}}
+
+/* ---- staggered reveal for retranslated copy ---- */
+.te__w{display:inline-block;white-space:pre-wrap;
+  animation:teIn .58s var(--ease) both;animation-delay:calc(var(--i,0) * 24ms)}
+@keyframes teIn{
+  from{opacity:0;filter:blur(9px);transform:translateY(9px)}
+  to  {opacity:1;filter:blur(0);transform:none}}
+@media(prefers-reduced-motion:reduce){.te__w{animation:none}}
 .hdr-right{display:flex;gap:.6rem;align-items:center}
 @media(max-width:1080px){header nav{display:none}}
 @media(max-width:620px){.bar{padding:.55rem 1rem;gap:.8rem}.hdr-right .btn{display:none}.lang{padding:.2rem}}
@@ -289,6 +353,24 @@ header nav a:hover{opacity:1}
 .dk__k{display:block;margin-top:2.6rem}
 .dk{display:inline-flex;align-items:center;gap:.35rem;margin-top:.9rem;
   padding:.7rem;border-radius:1.6rem}
+/* ---- compact variant that lives in the header bar ---- */
+.dkh{margin-top:0;gap:.1rem;padding:.26rem;border-radius:1.1rem}
+.dkh:hover{padding:.4rem;border-radius:1.3rem}
+.dkh .dk__i{padding:.2rem}
+.dkh .dk__s{width:2.05rem;height:2.05rem;border-radius:.68rem}
+.dkh:hover .dk__s{border-radius:.8rem}
+.dkh .dk__s svg{width:1.02rem;height:1.02rem}
+.dkh .dk__t{display:none}
+@media(max-width:1080px){.dkh{display:none}}
+/* ...and the full-size one folded into the mobile sheet */
+.dkm{display:none;margin-top:1.4rem}
+@media(max-width:1080px){.dkm{display:inline-flex}}
+@media(max-width:420px){
+  .dkm{gap:.05rem;padding:.45rem}
+  .dkm .dk__i{padding:.4rem .24rem .34rem}
+  .dkm .dk__s{width:2.5rem;height:2.5rem;border-radius:.8rem}
+  .dkm .dk__s svg{width:1.2rem;height:1.2rem}
+}
 .dk:hover{padding:.95rem;border-radius:2rem}
 .dk__i{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:.4rem;
   padding:.55rem .5rem .45rem;border-radius:1.1rem;text-decoration:none;color:var(--espresso);
@@ -557,7 +639,10 @@ footer .tag{color:rgba(245,240,234,.62);font-size:.82rem;margin-top:1rem;max-inl
    Fixed overlay so the photos ride above every section instead of being buried behind
    opaque backgrounds. pointer-events:none on the layer AND the images, so nothing on the
    page can be blocked from being clicked. Sits under the header (90) and book bar (88). */
-#ptrail{position:fixed;inset:0;z-index:95;pointer-events:none;overflow:hidden;contain:layout style paint}
+/* z-index:-1 drops the whole layer behind the page's own content, so photos
+   pass BEHIND the headline, the buttons and the hero image instead of over
+   them. Body's background propagates to the canvas, so they still show. */
+#ptrail{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:layout style paint}
 #ptrail img{position:absolute;top:0;left:0;width:10.5rem;height:13.5rem;object-fit:cover;
   opacity:0;transform:translate(-50%,-50%) scale(.45) rotate(var(--r,0deg));
   transition:transform 760ms cubic-bezier(.19,1,.22,1),opacity 760ms cubic-bezier(.19,1,.22,1);
@@ -567,9 +652,37 @@ footer .tag{color:rgba(245,240,234,.62);font-size:.82rem;margin-top:1rem;max-inl
 @media(hover:none),(max-width:900px){#ptrail{display:none}}
 
 /* the interlude band keeps its line; the trail now runs everywhere */
-.trail{position:relative;overflow:hidden;background:var(--rose);border-top:0;
+.trail{position:relative;overflow:hidden;border-top:0;isolation:isolate;
+  background:linear-gradient(128deg,#F5F0EA 0%,#EFD9D5 38%,#E7C6C2 64%,#C08560 100%);
   min-height:clamp(18rem,42vh,26rem);display:grid;place-content:center;text-align:center;
   padding:clamp(3rem,8vh,6rem) var(--gutter)}
+/* the drifting mesh: two blurred blob fields crossing each other on different
+   clocks, so the field never repeats a pose you have already seen */
+.trail::before,.trail::after{content:"";position:absolute;inset:-38%;z-index:0;
+  pointer-events:none;will-change:transform}
+.trail::before{
+  background:
+    radial-gradient(34% 38% at 28% 30%,rgba(247,243,238,.96),rgba(247,243,238,0) 70%),
+    radial-gradient(30% 34% at 71% 24%,rgba(231,198,194,.92),rgba(231,198,194,0) 72%),
+    radial-gradient(36% 40% at 47% 76%,rgba(192,133,96,.58),rgba(192,133,96,0) 70%);
+  filter:blur(34px);
+  animation:meshA 27s ease-in-out infinite alternate}
+.trail::after{
+  background:
+    radial-gradient(32% 36% at 79% 74%,rgba(156,95,63,.46),rgba(156,95,63,0) 70%),
+    radial-gradient(34% 38% at 17% 63%,rgba(245,240,234,.88),rgba(245,240,234,0) 71%),
+    radial-gradient(30% 34% at 58% 13%,rgba(239,217,213,.9),rgba(239,217,213,0) 72%);
+  filter:blur(42px);
+  animation:meshB 34s ease-in-out infinite alternate}
+@keyframes meshA{
+  0%  {transform:translate3d(-4%,-3%,0) scale(1)    rotate(0deg)}
+  50% {transform:translate3d( 5%, 4%,0) scale(1.13) rotate(7deg)}
+  100%{transform:translate3d(-2%, 6%,0) scale(1.05) rotate(-6deg)}}
+@keyframes meshB{
+  0%  {transform:translate3d( 4%, 3%,0) scale(1.07) rotate(0deg)}
+  50% {transform:translate3d(-6%,-2%,0) scale(1)    rotate(-9deg)}
+  100%{transform:translate3d( 3%,-5%,0) scale(1.11) rotate(6deg)}}
+@media(prefers-reduced-motion:reduce){.trail::before,.trail::after{animation:none}}
 .trail__line{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:400;
   font-size:clamp(1.6rem, 1.1rem + 2.4vw, 3.4rem);line-height:1.1;letter-spacing:-.02em;
   color:var(--espresso);position:relative;z-index:2;max-inline-size:22ch;margin:0 auto;
