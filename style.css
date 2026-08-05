@@ -112,6 +112,87 @@ header nav a:hover{opacity:1}
   .hero__img{grid-column:1/-1;order:1;margin:0 calc(-1*var(--gutter));aspect-ratio:4/3}
 }
 
+/* ---- email capture popup ---- */
+#zwov{position:fixed;inset:0;z-index:10000;background:rgba(43,35,31,.55);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  opacity:0;pointer-events:none;transition:opacity .35s var(--ease)}
+#zwov.on{opacity:1;pointer-events:auto}
+#zwpop{position:fixed;left:50%;top:50%;z-index:10001;width:min(92vw,470px);
+  transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;
+  background:var(--ivory);border-radius:20px;padding:46px 40px 38px;text-align:center;
+  box-shadow:0 30px 80px rgba(43,35,31,.35);
+  transition:opacity .35s var(--ease),transform .45s var(--ease-l)}
+#zwpop.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+#zwpop .zwx{position:absolute;top:12px;right:16px;border:0;background:none;padding:8px;
+  font-size:24px;line-height:1;color:#a8988e;cursor:pointer}
+#zwpop .zweb{font:600 .69rem/1 'Montserrat',sans-serif;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--copper-l);margin:0 0 14px}
+#zwpop h2{font-family:'Bodoni Moda',Georgia,serif;font-weight:500;font-size:clamp(1.55rem,4.4vw,1.9rem);
+  line-height:1.18;margin:0 0 14px;color:var(--espresso);text-wrap:balance}
+#zwpop .zwsub{font-size:.92rem;line-height:1.62;color:var(--muted);margin:0 0 22px}
+#zwpop input[type=email]{width:100%;box-sizing:border-box;padding:15px 18px;
+  border:1px solid #d6cec7;border-radius:12px;background:#fff;font:400 .95rem/1 'Montserrat',sans-serif;
+  color:var(--espresso);outline:none;margin-bottom:12px}
+#zwpop input[type=email]:focus{border-color:var(--copper-l)}
+#zwpop .zwgo{width:100%;padding:16px;border:0;border-radius:12px;background:var(--espresso);
+  color:var(--ivory);font:600 .82rem/1 'Montserrat',sans-serif;letter-spacing:.14em;
+  text-transform:uppercase;cursor:pointer;transition:background .25s var(--ease)}
+#zwpop .zwgo:hover{background:var(--copper-l)}
+#zwpop .zwno{display:inline-block;margin-top:16px;border:0;background:none;cursor:pointer;
+  font:400 .78rem/1.4 'Montserrat',sans-serif;color:#a8988e;text-decoration:underline}
+#zwpop .zwdone{display:none}
+#zwpop.claimed .zwform{display:none}
+#zwpop.claimed .zwdone{display:block}
+#zwpop .zwbook{display:block;box-sizing:border-box;margin-top:20px;text-decoration:none}
+@media(max-width:420px){#zwpop{padding:38px 24px 30px}}
+@media(prefers-reduced-motion:reduce){#zwov,#zwpop{transition-duration:1ms}}
+
+/* ---- lash style accordion: strips that open on hover / tap ---- */
+.xpand{display:flex;gap:.45rem;align-items:stretch;justify-content:center;
+  margin-top:clamp(1.8rem,3.4vw,3rem);padding:0 var(--gutter)}
+.xp{position:relative;flex:0 0 auto;isolation:isolate;
+  width:clamp(4rem,7vw,7.5rem);height:clamp(21rem,42vw,28rem);
+  border-radius:1.35rem;overflow:hidden;cursor:pointer;outline:none;
+  background:var(--rose) var(--img) center 46%/cover no-repeat;
+  box-shadow:0 18px 42px -32px rgba(69,59,54,.55);
+  transition:width 680ms var(--ease-l),box-shadow 680ms var(--ease-l)}
+.xp[data-on="1"]{width:clamp(17rem,38vw,29rem);box-shadow:0 34px 74px -36px rgba(69,59,54,.6)}
+.xp:focus-visible{box-shadow:0 0 0 2px var(--copper),0 24px 56px -34px rgba(69,59,54,.6)}
+.xp::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(to top,rgba(38,31,28,.72),rgba(38,31,28,.16) 46%,transparent 74%);
+  opacity:0;transition:opacity 520ms var(--ease)}
+.xp[data-on="1"]::after{opacity:1}
+.xp__v{position:absolute;inset:auto 0 1.15rem 0;z-index:2;display:grid;place-items:center;
+  pointer-events:none;opacity:.92;transition:opacity 300ms var(--ease)}
+.xp__v span{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;
+  font:500 .62rem/1 'Montserrat',sans-serif;letter-spacing:.22em;text-transform:uppercase;
+  color:#fff;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.xp[data-on="1"] .xp__v{opacity:0}
+.xp__body{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:1.4rem clamp(1.1rem,2vw,1.6rem) clamp(1.3rem,2vw,1.6rem);
+  display:flex;flex-direction:column;align-items:flex-start;gap:.42rem;
+  opacity:0;transform:translateY(16px);pointer-events:none;
+  transition:opacity 400ms var(--ease) 170ms,transform 560ms var(--ease-l) 150ms}
+.xp[data-on="1"] .xp__body{opacity:1;transform:none;pointer-events:auto}
+.xp__n{font-family:'Bodoni Moda',Georgia,serif;line-height:1;color:#fff;white-space:nowrap;
+  font-size:clamp(1.45rem,2.5vw,2.1rem)}
+.xp__p{font:500 .68rem/1 'Montserrat',sans-serif;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(255,255,255,.74)}
+.xp__cta{margin-top:.6rem;font-size:.68rem;padding:.7rem 1.2rem}
+.xhint{margin-top:1.3rem;text-align:center;pointer-events:none;
+  font:500 var(--t-label)/1 'Montserrat',sans-serif;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--copper);opacity:.6}
+@media(max-width:900px){
+  .xpand{justify-content:flex-start;gap:.7rem;overflow-x:auto;scroll-snap-type:x mandatory;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .xpand::-webkit-scrollbar{display:none}
+  .xp,.xp[data-on="1"]{width:min(74vw,20rem);height:24rem;scroll-snap-align:center}
+  .xp::after{opacity:1}
+  .xp .xp__v{display:none}
+  .xp .xp__body{opacity:1;transform:none;pointer-events:auto}
+}
+@media(prefers-reduced-motion:reduce){.xp,.xp__body,.xp::after{transition-duration:1ms}}
+
 .strip{background:var(--blush);overflow:hidden;padding:.9rem 0;white-space:nowrap;
   border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .strip .run{display:inline-block;animation:slide 46s linear infinite}

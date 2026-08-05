@@ -172,6 +172,87 @@
     addEventListener('keydown', function(e){ if (e.key === 'Escape') setMenu(false); });
   }
 
+  /* ---- email capture popup: 6s timer or exit intent, remembers the answer ---- */
+  (function(){
+    var ov = document.getElementById('zwov'), pop = document.getElementById('zwpop');
+    if (!ov || !pop) return;
+    var shown = false, lastFocus = null;
+    var put = function(k, v, days){ try{ localStorage.setItem(k, JSON.stringify(
+          {v: v, exp: Date.now() + days * 864e5})); }catch(e){} };
+    var get = function(k){ try{
+          var o = JSON.parse(localStorage.getItem(k) || 'null');
+          if (o && o.exp > Date.now()) return o.v;
+          localStorage.removeItem(k);
+        }catch(e){} return null; };
+    if (get('zwDismissed') || get('zwClaimed')) return;
+
+    var open = function(){
+      if (shown) return;
+      shown = true; lastFocus = document.activeElement;
+      ov.hidden = pop.hidden = false;
+      requestAnimationFrame(function(){ ov.classList.add('on'); pop.classList.add('on'); });
+      setTimeout(function(){ var m = document.getElementById('zwmail'); if (m) m.focus(); }, 400);
+    };
+    var close = function(days){
+      ov.classList.remove('on'); pop.classList.remove('on');
+      setTimeout(function(){ ov.hidden = pop.hidden = true; }, 400);
+      put('zwDismissed', 1, days || 3);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    };
+    [].forEach.call(pop.querySelectorAll('[data-zwclose]'), function(b){
+      b.addEventListener('click', function(){ close(3); });
+    });
+    ov.addEventListener('click', function(){ close(3); });
+    addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && pop.classList.contains('on')) close(3);
+    });
+
+    setTimeout(open, 6000);
+    document.addEventListener('mouseout', function(e){
+      if (!e.relatedTarget && e.clientY <= 0) open();
+    });
+
+    document.getElementById('zwf').addEventListener('submit', function(e){
+      e.preventDefault();
+      var f = document.getElementById('zwmail'), v = f.value.trim();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v)){ f.focus(); return; }
+      if (window.__ML){
+        var fd = new FormData();
+        fd.append('fields[email]', v);
+        fetch(window.__ML, {method:'POST', body: fd, mode:'no-cors'}).catch(function(){});
+      }
+      pop.classList.add('claimed');
+      put('zwClaimed', v, 60);
+    });
+  })();
+
+  /* ---- lash style accordion ---- */
+  var xw = document.querySelector('.xpand');
+  if (xw){
+    var xps = [].slice.call(xw.querySelectorAll('.xp'));
+    var fine = matchMedia('(hover: hover) and (pointer: fine)');
+    var setX = function(i){
+      xps.forEach(function(p, k){
+        var on = k === i;
+        p.dataset.on = on ? '1' : '0';
+        p.setAttribute('aria-expanded', on ? 'true' : 'false');
+      });
+    };
+    xps.forEach(function(p, i){
+      p.addEventListener('mouseenter', function(){ if (fine.matches) setX(i); });
+      p.addEventListener('focus', function(){ setX(i); });
+      p.addEventListener('click', function(e){
+        if (e.target.closest('a')) return;      // let the CTA through
+        setX(i);
+      });
+      p.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setX(i); }
+        else if (e.key === 'ArrowRight' && xps[i + 1]) xps[i + 1].focus();
+        else if (e.key === 'ArrowLeft'  && xps[i - 1]) xps[i - 1].focus();
+      });
+    });
+  }
+
   /* ---- photo cursor trail: site-wide, fixed layer, never blocks a click ---- */
   var pt = document.getElementById('ptrail');
   if (pt && !mq.matches && matchMedia('(hover: hover) and (pointer: fine)').matches){
