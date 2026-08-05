@@ -8,7 +8,7 @@
   --t-disp:clamp(2.3rem, 1.5rem + 3.6vw, 5rem);
   --t-h3:clamp(1.25rem, 1.1rem + 0.8vw, 1.7rem);
   --t-body:1.0625rem; --t-label:.6875rem;
-  --ease:cubic-bezier(.16,1,.3,1); --ease-l:cubic-bezier(.19,1,.22,1);
+  --ease:cubic-bezier(.16,1,.3,1);--spring:cubic-bezier(.175,.885,.32,1.6); --ease-l:cubic-bezier(.19,1,.22,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -56,6 +56,19 @@ p{margin-bottom:.9rem;max-inline-size:62ch;text-wrap:pretty}
 /* specular sweep across the top edge */
 .glass::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
   background:linear-gradient(160deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.08) 32%,transparent 55%)}
+/* tint + inner rim, the reference's layers 2 and 3. The heavy SVG lens the
+   reference stacks on top renders dark on repaint in Chrome, so the
+   refraction stays on backdrop-filter where it is stable. */
+.glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
+  background:rgba(255,255,255,.16);
+  box-shadow:inset 2px 2px 1px 0 rgba(255,255,255,.5),
+             inset -1px -1px 1px 1px rgba(255,255,255,.45)}
+/* springy on hover, the way the reference dock behaves */
+.glass{transition:padding .7s var(--spring),border-radius .7s var(--spring),
+  box-shadow .7s var(--spring),transform .7s var(--spring)}
+a.glass:hover,button.glass:hover{transform:translateY(-1px) scale(1.02)}
+@media(prefers-reduced-motion:reduce){.glass{transition:none}
+  a.glass:hover,button.glass:hover{transform:none}}
 /* true refraction where the browser supports filtering the backdrop */
 @supports ((backdrop-filter:url(#lg)) or (-webkit-backdrop-filter:url(#lg))){
   .glass{-webkit-backdrop-filter:url(#lg) blur(11px) saturate(1.7) brightness(1.05);
@@ -154,6 +167,30 @@ header nav a:hover{opacity:1}
   .hero__type{grid-column:1/-1;order:2;padding-bottom:0;padding-top:2rem}
   .hero__img{grid-column:1/-1;order:1;margin:0 calc(-1*var(--gutter));aspect-ratio:4/3}
 }
+
+/* ---- glass social dock ---- */
+.dk__k{display:block;margin-top:2.6rem}
+.dk{display:inline-flex;align-items:center;gap:.35rem;margin-top:.9rem;
+  padding:.7rem;border-radius:1.6rem}
+.dk:hover{padding:.95rem;border-radius:2rem}
+.dk__i{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  padding:.55rem .5rem .45rem;border-radius:1.1rem;text-decoration:none;color:var(--espresso);
+  transition:transform .7s var(--spring),color .45s var(--ease),background .45s var(--ease)}
+.dk__s{display:grid;place-items:center;width:3.05rem;height:3.05rem;border-radius:1rem;
+  background:linear-gradient(150deg,rgba(255,255,255,.7),rgba(231,198,194,.55));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 8px 18px -12px rgba(69,59,54,.5);
+  transition:transform .7s var(--spring),box-shadow .5s var(--ease),background .45s var(--ease)}
+.dk__s svg{width:1.42rem;height:1.42rem}
+.dk__t{font:500 .58rem/1 'Montserrat',sans-serif;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);opacity:0;transform:translateY(-3px);
+  transition:opacity .45s var(--ease),transform .5s var(--spring)}
+.dk__i:hover,.dk__i:focus-visible{color:var(--copper);outline:none}
+.dk__i:hover .dk__s,.dk__i:focus-visible .dk__s{transform:translateY(-5px) scale(1.11);
+  background:linear-gradient(150deg,rgba(255,255,255,.86),rgba(239,217,213,.8));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 16px 26px -14px rgba(69,59,54,.55)}
+.dk__i:hover .dk__t,.dk__i:focus-visible .dk__t{opacity:1;transform:none}
+@media(max-width:620px){.dk{gap:.1rem;padding:.55rem}.dk__s{width:2.7rem;height:2.7rem}.dk__t{display:none}}
+@media(prefers-reduced-motion:reduce){.dk,.dk__i,.dk__s,.dk__t{transition:none}}
 
 /* ---- email capture popup ---- */
 #zwov{position:fixed;inset:0;z-index:10000;background:rgba(43,35,31,.55);
