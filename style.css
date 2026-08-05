@@ -279,7 +279,7 @@ footer .tag{color:rgba(245,240,234,.62);font-size:.82rem;margin-top:1rem;max-inl
    Fixed overlay so the photos ride above every section instead of being buried behind
    opaque backgrounds. pointer-events:none on the layer AND the images, so nothing on the
    page can be blocked from being clicked. Sits under the header (90) and book bar (88). */
-#ptrail{position:fixed;inset:0;z-index:70;pointer-events:none;overflow:hidden;contain:strict}
+#ptrail{position:fixed;inset:0;z-index:70;pointer-events:none;overflow:hidden;contain:layout style paint}
 #ptrail img{position:absolute;top:0;left:0;width:10.5rem;height:13.5rem;object-fit:cover;
   opacity:0;transform:translate(-50%,-50%) scale(.45) rotate(var(--r,0deg));
   transition:transform 760ms cubic-bezier(.19,1,.22,1),opacity 760ms cubic-bezier(.19,1,.22,1);

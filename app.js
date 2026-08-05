@@ -177,6 +177,18 @@
   if (pt && !mq.matches && matchMedia('(hover: hover) and (pointer: fine)').matches){
     var pImgs = [].slice.call(pt.querySelectorAll('img')),
         pIdx = 0, pLast = null, pTimers = [];
+    /* fetch the trail photos after the page is painted, a few at a time,
+       so they never compete with the hero or block first render */
+    var pWarm = function(){
+      var q = pImgs.slice(), pump = function(){
+        var im = q.shift(); if (!im) return;
+        if (im.dataset.src){ im.src = im.dataset.src; im.removeAttribute('data-src'); }
+        im.complete ? pump() : (im.onload = im.onerror = pump);
+      };
+      pump(); pump(); pump();
+    };
+    (document.readyState === 'complete') ? setTimeout(pWarm, 400)
+      : addEventListener('load', function(){ setTimeout(pWarm, 400); });
     var pGap = function(){ return Math.max(innerWidth / 16, 90); };
     addEventListener('pointermove', function(e){
       if (e.pointerType && e.pointerType !== 'mouse') return;
