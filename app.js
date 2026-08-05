@@ -289,6 +289,61 @@
     });
   }
 
+
+  /* ---- membership: billing switch + which tier the lead picked ---- */
+  var mtg = document.querySelector('.mtg'), mbForm = document.getElementById('mbform');
+  if (mtg){
+    var mbCycle = document.getElementById('mbcycle');
+    var setCycle = function(c){
+      mtg.classList.toggle('yr', c === 'yr');
+      mtg.classList.remove('go'); void mtg.offsetWidth; mtg.classList.add('go');
+      mtg.querySelectorAll('button').forEach(function(b){
+        b.setAttribute('aria-pressed', String(b.dataset.cycle === c));
+      });
+      /* swap any tier that actually has numbers in it yet */
+      document.querySelectorAll('.mp__price b').forEach(function(el){
+        var v = c === 'yr' ? el.dataset.yr : el.dataset.mo;
+        if (v) el.textContent = '$' + v;
+      });
+      document.querySelectorAll('.mp__per').forEach(function(el){
+        el.textContent = c === 'yr' ? '/year' : '/month';
+      });
+      if (mbCycle) mbCycle.value = (c === 'yr' ? 'yearly' : 'monthly');
+    };
+    mtg.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){ setCycle(b.dataset.cycle); });
+    });
+  }
+  if (mbForm){
+    var mbTier = document.getElementById('mbtier'),
+        mbPick = document.getElementById('mbpick'),
+        mbOk   = document.getElementById('mbok');
+    document.querySelectorAll('.mp__cta').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var card = btn.closest('.mp'),
+            name = card.querySelector('.mp__name').textContent.trim();
+        document.querySelectorAll('.mp__cta').forEach(function(b){ b.classList.remove('on'); });
+        btn.classList.add('on');
+        if (mbTier) mbTier.value = btn.dataset.tier;
+        if (mbPick) mbPick.textContent = name;
+        mbForm.scrollIntoView({block: 'center', behavior: 'smooth'});
+        var first = mbForm.querySelector('input[type=text]');
+        if (first) setTimeout(function(){ first.focus({preventScroll: true}); }, 500);
+      });
+    });
+    mbForm.addEventListener('submit', function(ev){
+      /* until the mailing list is connected there is nowhere to post to, so
+         hand the visitor straight to the phone rather than swallow the lead */
+      if (!mbForm.getAttribute('action')){
+        ev.preventDefault();
+        if (mbOk) mbOk.classList.add('on');
+        mbForm.reset();
+        if (mbPick) mbPick.textContent = '';
+        document.querySelectorAll('.mp__cta').forEach(function(b){ b.classList.remove('on'); });
+      }
+    });
+  }
+
   /* ---- liquid glass: a lens that trails the cursor across any glass pane.
      It is spring-driven, so it lags, overshoots and settles, and it squashes
      along its direction of travel — that lag is what reads as liquid. ---- */

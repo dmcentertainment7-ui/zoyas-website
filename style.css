@@ -349,6 +349,82 @@ header nav a:hover{opacity:1}
 @media(max-width:620px){.lmap__c.on{width:min(88vw,22.5rem)}}
 @media(prefers-reduced-motion:reduce){.lmap__c,.lmap__st,.rd,.bl,.lmap__pin{transition-duration:1ms}}
 
+/* ---- membership ---- */
+#membership{position:relative}
+.mb__lede{grid-column:3/11;text-align:center}
+.mb__grid{grid-column:1/-1}
+.mb__lead{grid-column:3/11}
+@media(max-width:900px){.mb__lede,.mb__lead{grid-column:1/-1}}
+.mb__lede p{margin-top:1.1rem}
+/* billing switch, same knob physics as the language toggle */
+.mtg{position:relative;display:inline-flex;margin:2.2rem auto 0;border-radius:999px;padding:.3rem}
+.mtg>.mtg__k{position:absolute;z-index:3;top:.3rem;bottom:.3rem;left:.3rem;
+  width:calc(50% - .3rem);border-radius:999px;pointer-events:none;
+  background:linear-gradient(140deg,var(--copper-l),var(--copper) 58%,#7C4A31);
+  box-shadow:0 8px 16px -10px rgba(69,59,54,.7),inset 0 1px 0 rgba(255,255,255,.42);
+  transform:translate3d(0,0,0);transform-origin:50% 50%;
+  transition:transform .66s var(--spring)}
+.mtg.yr>.mtg__k{transform:translate3d(100%,0,0)}
+.mtg.go>.mtg__k{animation:langFlow .66s var(--ease)}
+.mtg button{position:relative;z-index:4;flex:1 1 50%;border:0;background:none;cursor:pointer;
+  padding:.5rem 1.5rem;border-radius:999px;white-space:nowrap;
+  font:500 .68rem/1 'Montserrat',sans-serif;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--espresso);opacity:.55;transition:color .42s var(--ease),opacity .42s var(--ease)}
+.mtg button[aria-pressed="true"]{color:var(--ivory);opacity:1}
+.mb__sw{display:flex;justify-content:center}
+
+.mb__grid{display:grid;gap:clamp(1rem,1.8vw,1.8rem);margin-top:3.2rem;
+  grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+@media(max-width:940px){.mb__grid{grid-template-columns:1fr;max-width:26rem;margin-inline:auto}}
+.mp{position:relative;display:flex;flex-direction:column;padding:2rem 1.7rem 1.8rem;border-radius:1.5rem;
+  transition:transform .7s var(--spring),box-shadow .7s var(--spring),background .5s var(--ease)}
+.mp:hover{transform:translateY(-4px)}
+.mp--pop{outline:1px solid rgba(156,95,63,.42);outline-offset:-1px}
+@media(min-width:941px){.mp--pop{transform:scale(1.035)}.mp--pop:hover{transform:scale(1.035) translateY(-4px)}}
+.mp>.mp__badge{position:absolute;top:-.72rem;left:50%;transform:translateX(-50%);z-index:4;
+  padding:.32rem .8rem;border-radius:999px;white-space:nowrap;
+  background:linear-gradient(140deg,var(--copper-l),var(--copper));color:var(--ivory);
+  font:500 .55rem/1 'Montserrat',sans-serif;letter-spacing:.18em;text-transform:uppercase;
+  box-shadow:0 8px 18px -12px rgba(69,59,54,.8)}
+.mp__name{font-family:'Bodoni Moda',Georgia,serif;font-weight:400;font-size:1.7rem;
+  letter-spacing:-.015em;color:var(--espresso)}
+.mp__desc{margin-top:.4rem;font-size:.9rem;line-height:1.6;color:var(--muted)}
+.mp__price{margin-top:1.2rem;display:flex;align-self:flex-start;align-items:baseline;gap:.35rem}
+.mp__price b{font-family:'Bodoni Moda',Georgia,serif;font-weight:400;font-size:2.7rem;
+  line-height:1;color:var(--espresso)}
+.mp__per{font:500 .68rem/1 'Montserrat',sans-serif;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted)}
+.mp__soon{margin-top:1.2rem;padding:.5rem .85rem;border-radius:999px;align-self:flex-start;
+  background:rgba(231,198,194,.5);color:var(--copper);
+  font:500 .6rem/1.4 'Montserrat',sans-serif;letter-spacing:.16em;text-transform:uppercase}
+.mp__f{list-style:none;margin:1.5rem 0 1.7rem;padding:0;flex:1 1 auto}
+.mp__r{display:flex;align-items:flex-start;gap:.65rem;padding:.42rem 0;
+  font-size:.88rem;line-height:1.5;color:var(--espresso)}
+.mp__r.off{color:rgba(110,95,87,.55)}
+.mp__i{width:1.05rem;height:1.05rem;flex:0 0 auto;margin-top:.22rem;color:var(--copper)}
+.mp__i--no{color:rgba(110,95,87,.42)}
+.mp__cta{width:100%;justify-content:center}
+.mp__cta.on{--c1:#C08560;--c2:#9C5F3F}
+
+.mb__lead{margin-top:3.4rem;padding:2rem 1.8rem;border-radius:1.5rem;text-align:center}
+.mb__lead h3{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:400;
+  font-size:clamp(1.3rem,1.1rem+.7vw,1.8rem);color:var(--espresso)}
+.mb__form{display:grid;gap:.6rem;margin-top:1.4rem;
+  grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:720px){.mb__form{grid-template-columns:1fr}}
+.mb__form input{width:100%;padding:.85rem 1.1rem;border-radius:999px;
+  border:1px solid var(--rule-2);background:rgba(255,255,255,.7);
+  font:400 .88rem/1 'Montserrat',sans-serif;color:var(--espresso)}
+.mb__form input:focus{outline:none;border-color:var(--copper);
+  box-shadow:0 0 0 3px rgba(192,133,96,.18)}
+.mb__form .btn{grid-column:1/-1;justify-content:center;margin-top:.3rem}
+.mb__pick{margin-top:.9rem;font:500 .6rem/1.5 'Montserrat',sans-serif;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--copper);min-height:1.1rem}
+.mb__ok{display:none;margin-top:1.1rem;padding:.9rem 1.2rem;border-radius:1rem;
+  background:rgba(231,198,194,.45);font-size:.9rem;line-height:1.6;color:var(--espresso)}
+.mb__ok.on{display:block}
+.mb__fine{margin-top:.9rem;font-size:.74rem;line-height:1.6;color:var(--muted)}
+
 /* ---- glass social dock ---- */
 .dk__k{display:block;margin-top:2.6rem}
 .dk{display:inline-flex;align-items:center;gap:.35rem;margin-top:.9rem;
