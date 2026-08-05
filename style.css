@@ -60,44 +60,10 @@ p{margin-bottom:.9rem;max-inline-size:62ch;text-wrap:pretty}
    reference stacks on top renders dark on repaint in Chrome, so the
    refraction stays on backdrop-filter where it is stable. */
 .glass::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:2;
-  background:
-    radial-gradient(9rem 9rem at var(--mx,-30%) var(--my,-30%),
-      rgba(255,255,255,.36),rgba(255,255,255,.10) 46%,rgba(255,255,255,0) 72%),
-    rgba(255,255,255,.16);
+  background:rgba(255,255,255,.16);
   box-shadow:inset 2px 2px 1px 0 rgba(255,255,255,.5),
              inset -1px -1px 1px 1px rgba(255,255,255,.45)}
 
-/* ---- the travelling lens: one element, clipped to whichever glass the
-   cursor is over. It lags, overshoots and stretches with the direction of
-   travel, which is what makes it read as liquid rather than as a hover state. */
-/* the wrapper only ever translates, so the clip stays square with the pane;
-   the child carries the rotation and squash so the droplet can stretch */
-#lqlens{position:fixed;left:0;top:0;width:9.5rem;height:9.5rem;margin:-4.75rem 0 0 -4.75rem;
-  pointer-events:none;z-index:96;opacity:0;will-change:transform,clip-path;
-  transform:translate3d(-999px,-999px,0);transition:opacity .38s var(--ease)}
-#lqlens.on{opacity:1}
-/* b carries the stretch AND clips: without overflow:hidden the SVG filter
-   region paints the refracted backdrop as a square patch around the droplet */
-#lqlens b{display:block;position:absolute;inset:0;border-radius:50%;
-  overflow:hidden;isolation:isolate;will-change:transform}
-/* rim + meniscus, so the droplet still reads as liquid over flat colour
-   where there is nothing behind it for the refraction to bend */
-#lqlens i{display:block;position:absolute;inset:0;border-radius:50%;
-  background:
-    radial-gradient(circle at 50% 50%,rgba(255,255,255,0) 54%,
-      rgba(255,255,255,.34) 76%,rgba(255,255,255,0) 90%),
-    radial-gradient(circle at 36% 30%,
-      rgba(255,255,255,.62),rgba(255,255,255,.11) 46%,rgba(255,255,255,0) 71%);
-  box-shadow:inset 0 0 26px rgba(255,255,255,.45),
-             inset 0 3px 7px rgba(255,255,255,.72),
-             inset 0 -7px 13px rgba(69,59,54,.11),
-             inset 0 0 4px rgba(255,255,255,.6)}
-@supports ((backdrop-filter:url(#lgb)) or (-webkit-backdrop-filter:url(#lgb))){
-  #lqlens i{-webkit-backdrop-filter:url(#lgb) blur(1px) brightness(1.07) saturate(1.35);
-            backdrop-filter:url(#lgb) blur(1px) brightness(1.07) saturate(1.35)}
-}
-@media(max-width:760px){#lqlens{display:none}}
-@media(prefers-reduced-motion:reduce){#lqlens{display:none}}
 /* every glass surface reacts — grows, lifts and brightens on the spring curve */
 .glass{transition:padding .7s var(--spring),border-radius .7s var(--spring),
   box-shadow .7s var(--spring),transform .7s var(--spring),background .5s var(--ease)}
