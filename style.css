@@ -107,11 +107,10 @@ header nav ul a:hover,header nav ul a:focus-visible{color:var(--copper);outline:
   .glass,.bar,.btn.glass,header nav ul a,.lang button,.bar>a:first-child{transition:none}
   a.glass:hover,button.glass:hover,.dk:hover,.lang:hover,.menubtn:hover,
   .bar:hover,.btn.glass:hover,header nav ul a:hover,.bar>a:first-child:hover{transform:none}}
-/* true refraction where the browser supports filtering the backdrop */
-@supports ((backdrop-filter:url(#lg)) or (-webkit-backdrop-filter:url(#lg))){
-  .glass{-webkit-backdrop-filter:url(#lg) blur(11px) saturate(1.7) brightness(1.05);
-         backdrop-filter:url(#lg) blur(11px) saturate(1.7) brightness(1.05)}
-}
+/* NO SVG filter in backdrop-filter. Chrome composites an SVG-filtered backdrop
+   over the filter region as a RECTANGLE and ignores border-radius, which is what
+   produced the box leaking out of every pane. Plain CSS filter functions are
+   clipped to the rounded border-box correctly, so the glass stays a pill. */
 @media(max-width:760px){
   .glass{-webkit-backdrop-filter:blur(12px) saturate(1.5);backdrop-filter:blur(12px) saturate(1.5)}
 }
