@@ -73,9 +73,52 @@ p{margin-bottom:.9rem;max-inline-size:62ch;text-wrap:pretty}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.55rem;border-radius:999px;padding:1rem 2rem;
   font:500 .75rem/1 'Montserrat',sans-serif;letter-spacing:.16em;text-transform:uppercase;
   color:var(--espresso);cursor:pointer;transition:color .5s var(--ease),background .5s var(--ease);border:0}
-.btn.solid{background:var(--espresso);color:var(--ivory)}
-.btn.solid:hover{background:var(--copper)}
+/* solid buttons: an animated radial bloom in Blush & Stone.
+   @property lets the colour stops themselves transition rather than
+   cross-fading two flat backgrounds. Unsupported browsers just snap. */
+@property --pos-x   {syntax:'<percentage>';initial-value:12%;inherits:false}
+@property --pos-y   {syntax:'<percentage>';initial-value:140%;inherits:false}
+@property --sp-x    {syntax:'<percentage>';initial-value:150%;inherits:false}
+@property --sp-y    {syntax:'<percentage>';initial-value:180%;inherits:false}
+@property --c1 {syntax:'<color>';initial-value:#2E2724;inherits:false}
+@property --c2 {syntax:'<color>';initial-value:#3B322D;inherits:false}
+@property --c3 {syntax:'<color>';initial-value:#453B36;inherits:false}
+@property --c4 {syntax:'<color>';initial-value:#5A4A41;inherits:false}
+@property --c5 {syntax:'<color>';initial-value:#7A5B47;inherits:false}
+@property --s1 {syntax:'<percentage>';initial-value:37%;inherits:false}
+@property --s2 {syntax:'<percentage>';initial-value:61%;inherits:false}
+@property --s3 {syntax:'<percentage>';initial-value:78%;inherits:false}
+@property --s4 {syntax:'<percentage>';initial-value:90%;inherits:false}
+@property --s5 {syntax:'<percentage>';initial-value:100%;inherits:false}
+@property --ba  {syntax:'<angle>';initial-value:20deg;inherits:true}
+@property --bc1 {syntax:'<color>';initial-value:rgba(231,198,194,.18);inherits:true}
+@property --bc2 {syntax:'<color>';initial-value:rgba(231,198,194,.55);inherits:true}
+
+.btn.solid{position:relative;appearance:none;color:var(--ivory);background:var(--espresso);
+  background:radial-gradient(var(--sp-x) var(--sp-y) at var(--pos-x) var(--pos-y),
+    var(--c1) var(--s1),var(--c2) var(--s2),var(--c3) var(--s3),
+    var(--c4) var(--s4),var(--c5) var(--s5));
+  transition:color .5s var(--ease),
+    --pos-x .55s var(--ease),--pos-y .55s var(--ease),
+    --sp-x .55s var(--ease),--sp-y .55s var(--ease),
+    --c1 .55s var(--ease),--c2 .55s var(--ease),--c3 .55s var(--ease),
+    --c4 .55s var(--ease),--c5 .55s var(--ease),
+    --s1 .55s var(--ease),--s2 .55s var(--ease),--s3 .55s var(--ease),
+    --s4 .55s var(--ease),--s5 .55s var(--ease),
+    --ba .55s var(--ease),--bc1 .55s var(--ease),--bc2 .55s var(--ease)}
+.btn.solid::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;
+  background:linear-gradient(var(--ba),var(--bc1),var(--bc2));pointer-events:none;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude}
+.btn.solid>*{position:relative;z-index:1}
+.btn.solid:hover,.btn.solid:focus-visible{
+  --pos-x:0%;--pos-y:92%;--sp-x:120%;--sp-y:103%;
+  --c1:#C08560;--c2:#9C5F3F;--c3:#6E5F57;--c4:#453B36;--c5:#2E2724;
+  --s1:0%;--s2:15%;--s3:41%;--s4:78%;--s5:92%;
+  --ba:190deg;--bc1:rgba(245,240,234,.12);--bc2:rgba(231,198,194,.7)}
 .btn.glass:hover{color:var(--copper)}
+@media(prefers-reduced-motion:reduce){.btn.solid{transition:color .2s}}
 .actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem}
 
 header{position:fixed;top:0;left:0;right:0;z-index:90;padding:.85rem var(--gutter);
