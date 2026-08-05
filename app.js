@@ -190,8 +190,16 @@
     (document.readyState === 'complete') ? setTimeout(pWarm, 400)
       : addEventListener('load', function(){ setTimeout(pWarm, 400); });
     var pGap = function(){ return Math.min(Math.max(innerWidth / 16, 78), 120); };
+    /* the layer is fixed and full-viewport so photos are never clipped, but
+       they only appear while the cursor is inside a [data-trail] section */
+    var pClear = function(){ pImgs.forEach(function(im){ im.dataset.on = '0'; }); };
+    var pInZone = function(x, y){
+      var el = document.elementFromPoint(x, y);
+      return !!(el && el.closest && el.closest('[data-trail]'));
+    };
     addEventListener('pointermove', function(e){
       if (e.pointerType && e.pointerType !== 'mouse') return;
+      if (!pInZone(e.clientX, e.clientY)){ pLast = null; pClear(); return; }
       if (pLast === null){ pLast = {x: e.clientX, y: e.clientY}; return; }
       var dx = e.clientX - pLast.x, dy = e.clientY - pLast.y;
       if (Math.sqrt(dx*dx + dy*dy) < pGap()) return;
@@ -206,9 +214,10 @@
       pIdx++;
     }, {passive: true});
     // clear everything when the cursor leaves the window entirely
-    document.addEventListener('mouseleave', function(){
-      pImgs.forEach(function(im){ im.dataset.on = '0'; });
-    });
+    document.addEventListener('mouseleave', pClear);
+    addEventListener('scroll', function(){
+      if (pLast && !pInZone(pLast.x, pLast.y)){ pLast = null; pClear(); }
+    }, {passive: true});
   }
 
   /* ---- hero image expands with natural scroll (no scroll hijacking) ---- */

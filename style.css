@@ -299,6 +299,10 @@ footer .tag{color:rgba(245,240,234,.62);font-size:.82rem;margin-top:1rem;max-inl
 .trail__hint{position:relative;z-index:2;margin-top:1.6rem;pointer-events:none;
   font:500 var(--t-label)/1 'Montserrat',sans-serif;letter-spacing:.24em;text-transform:uppercase;
   color:var(--copper);opacity:.65}
+.hero__hint{margin-top:2.2rem;display:flex;align-items:center;gap:.7rem;opacity:0;
+  animation:hintIn 900ms var(--ease) 2.6s forwards}
+.hero__hint::before{content:"";width:2.4rem;height:1px;background:currentColor;opacity:.55}
+@keyframes hintIn{to{opacity:.62}}
 @media(hover:none),(max-width:900px){.trail__hint{display:none}}
 
 /* hero image grows with natural scroll — no scroll hijacking */
