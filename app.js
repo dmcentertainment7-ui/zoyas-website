@@ -332,8 +332,7 @@
         if (mbTier) mbTier.value = btn.dataset.tier;
         if (mbPick) mbPick.textContent = name;
         if (mbSms) mbSms.href = mbSms.href.split('?')[0] + '?&body=' +
-          encodeURIComponent("Hi Zoya's - I'd like to join the membership waitlist for the "
-                             + name + " plan.");
+          encodeURIComponent("Hi Zoya's - I'd like to start the " + name + " membership.");
         mbTarget.scrollIntoView({block: 'center', behavior: 'smooth'});
         var first = mbForm && mbForm.querySelector('input[type=text]');
         if (first) setTimeout(function(){ first.focus({preventScroll: true}); }, 500);
