@@ -189,7 +189,7 @@
     };
     (document.readyState === 'complete') ? setTimeout(pWarm, 400)
       : addEventListener('load', function(){ setTimeout(pWarm, 400); });
-    var pGap = function(){ return Math.max(innerWidth / 16, 90); };
+    var pGap = function(){ return Math.min(Math.max(innerWidth / 16, 78), 120); };
     addEventListener('pointermove', function(e){
       if (e.pointerType && e.pointerType !== 'mouse') return;
       if (pLast === null){ pLast = {x: e.clientX, y: e.clientY}; return; }
