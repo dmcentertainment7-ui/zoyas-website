@@ -253,6 +253,57 @@
     });
   }
 
+  /* ---- location card: tilts to the cursor, opens into a street plan ---- */
+  var lmc = document.querySelector('.lmap__c');
+  if (lmc){
+    /* open / closed on the shop's clock (America/Chicago), not the visitor's */
+    var lmLive = lmc.querySelector('.lmap__live');
+    var lmHours = function(){
+      var h;
+      try {
+        h = parseInt(new Intl.DateTimeFormat('en-US', {timeZone:'America/Chicago',
+              hour:'2-digit', hour12:false}).format(new Date()), 10);
+      } catch (e){ h = new Date().getHours(); }
+      if (h === 24) h = 0;
+      if (lmLive) lmLive.classList.toggle('shut', !(h >= 8 && h < 20));
+    };
+    lmHours(); setInterval(lmHours, 60000);
+
+    var lmRaf = 0;
+    if (!mq.matches && matchMedia('(hover: hover) and (pointer: fine)').matches){
+      lmc.addEventListener('pointermove', function(e){
+        if (lmRaf) return;
+        lmRaf = requestAnimationFrame(function(){
+          lmRaf = 0;
+          var r = lmc.getBoundingClientRect(),
+              px = (e.clientX - r.left) / r.width  - 0.5,
+              py = (e.clientY - r.top)  / r.height - 0.5,
+              amt = lmc.classList.contains('on') ? 5 : 9;
+          lmc.style.setProperty('--ry', (px * amt).toFixed(2) + 'deg');
+          lmc.style.setProperty('--rx', (-py * amt).toFixed(2) + 'deg');
+        });
+      }, {passive:true});
+      lmc.addEventListener('pointerleave', function(){
+        lmc.style.setProperty('--rx', '0deg');
+        lmc.style.setProperty('--ry', '0deg');
+      });
+    }
+
+    var lmSet = function(on){
+      lmc.classList.toggle('on', on);
+      lmc.setAttribute('aria-expanded', on ? 'true' : 'false');
+    };
+    lmc.addEventListener('click', function(e){
+      if (e.target.closest && e.target.closest('a')) return;   // let directions through
+      lmSet(!lmc.classList.contains('on'));
+    });
+    lmc.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' '){
+        e.preventDefault(); lmSet(!lmc.classList.contains('on'));
+      } else if (e.key === 'Escape') lmSet(false);
+    });
+  }
+
   /* ---- photo cursor trail: site-wide, fixed layer, never blocks a click ---- */
   var pt = document.getElementById('ptrail');
   if (pt && !mq.matches && matchMedia('(hover: hover) and (pointer: fine)').matches){

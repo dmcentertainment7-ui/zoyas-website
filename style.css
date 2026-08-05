@@ -63,12 +63,49 @@ p{margin-bottom:.9rem;max-inline-size:62ch;text-wrap:pretty}
   background:rgba(255,255,255,.16);
   box-shadow:inset 2px 2px 1px 0 rgba(255,255,255,.5),
              inset -1px -1px 1px 1px rgba(255,255,255,.45)}
-/* springy on hover, the way the reference dock behaves */
+/* every glass surface reacts — grows, lifts and brightens on the spring curve */
 .glass{transition:padding .7s var(--spring),border-radius .7s var(--spring),
-  box-shadow .7s var(--spring),transform .7s var(--spring)}
-a.glass:hover,button.glass:hover{transform:translateY(-1px) scale(1.02)}
-@media(prefers-reduced-motion:reduce){.glass{transition:none}
-  a.glass:hover,button.glass:hover{transform:none}}
+  box-shadow .7s var(--spring),transform .7s var(--spring),background .5s var(--ease)}
+.glass:hover{background:linear-gradient(135deg,rgba(255,255,255,.56),rgba(255,255,255,.24) 42%,rgba(255,255,255,.46))}
+a.glass:hover,button.glass:hover,.dk:hover,.lang:hover,.menubtn:hover{
+  transform:translateY(-2px) scale(1.03)}
+
+/* the header bar itself */
+.bar{transition:padding .7s var(--spring),border-radius .7s var(--spring),
+  box-shadow .7s var(--spring),transform .7s var(--spring),background .5s var(--ease)}
+.bar:hover{padding:.72rem 1.7rem;border-radius:2.2rem;transform:translateY(-1px)}
+/* the wordmark inside it */
+.bar>a:first-child{display:inline-flex;padding:.28rem .55rem;border-radius:14px;
+  transition:transform .7s var(--spring),background .45s var(--ease)}
+.bar>a:first-child:hover{transform:scale(1.05);background:rgba(255,255,255,.5)}
+/* each nav item becomes its own little glass pill */
+header nav ul a{display:inline-block;padding:.42rem .78rem;border-radius:999px;
+  transition:color .4s var(--ease),background .45s var(--ease),
+    transform .7s var(--spring),box-shadow .6s var(--spring)}
+header nav ul a:hover,header nav ul a:focus-visible{color:var(--copper);outline:none;
+  background:rgba(255,255,255,.55);transform:translateY(-2px) scale(1.04);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 8px 16px -11px rgba(69,59,54,.55)}
+/* language toggle */
+.lang button{transition:color .4s var(--ease),background .45s var(--ease),transform .6s var(--spring)}
+.lang button:hover{transform:scale(1.08)}
+
+/* glass buttons: .btn declares its own transition below, so restate the
+   spring properties here or they get dropped */
+.btn.glass{transition:color .5s var(--ease),background .5s var(--ease),
+  padding .7s var(--spring),border-radius .7s var(--spring),
+  transform .7s var(--spring),box-shadow .7s var(--spring)}
+.btn.glass:hover{transform:translateY(-3px) scale(1.05);
+  padding-left:2.3rem;padding-right:2.3rem;
+  box-shadow:inset 3px 3px .5px -3px rgba(255,255,255,.95),
+    inset -3px -3px .5px -3px rgba(255,255,255,.75),
+    inset 0 0 8px 8px rgba(255,255,255,.18),
+    0 22px 44px -22px rgba(69,59,54,.42)}
+.btn.glass:active{transform:translateY(-1px) scale(1.01)}
+
+@media(prefers-reduced-motion:reduce){
+  .glass,.bar,.btn.glass,header nav ul a,.lang button,.bar>a:first-child{transition:none}
+  a.glass:hover,button.glass:hover,.dk:hover,.lang:hover,.menubtn:hover,
+  .bar:hover,.btn.glass:hover,header nav ul a:hover,.bar>a:first-child:hover{transform:none}}
 /* true refraction where the browser supports filtering the backdrop */
 @supports ((backdrop-filter:url(#lg)) or (-webkit-backdrop-filter:url(#lg))){
   .glass{-webkit-backdrop-filter:url(#lg) blur(11px) saturate(1.7) brightness(1.05);
@@ -167,6 +204,86 @@ header nav a:hover{opacity:1}
   .hero__type{grid-column:1/-1;order:2;padding-bottom:0;padding-top:2rem}
   .hero__img{grid-column:1/-1;order:1;margin:0 calc(-1*var(--gutter));aspect-ratio:4/3}
 }
+
+/* ---- location card: tilts to the cursor, opens to a street plan ---- */
+.lmap{margin-top:2.4rem;perspective:1000px;width:max-content}
+.lmap__c{position:relative;width:15rem;height:8.75rem;border-radius:1.25rem;overflow:hidden;
+  cursor:pointer;outline:none;background:var(--ivory);border:1px solid rgba(69,59,54,.12);
+  transform-style:preserve-3d;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  box-shadow:0 18px 42px -30px rgba(69,59,54,.5);
+  transition:width .75s var(--spring),height .75s var(--spring),
+    transform .5s cubic-bezier(.2,.8,.3,1),box-shadow .6s var(--ease)}
+.lmap__c:focus-visible{box-shadow:0 0 0 2px var(--copper),0 18px 42px -30px rgba(69,59,54,.5)}
+.lmap__c.on{width:22.5rem;height:17.5rem;box-shadow:0 34px 70px -34px rgba(69,59,54,.55)}
+.lmap__st{position:absolute;inset:0;width:100%;height:100%;opacity:0;
+  transition:opacity .5s var(--ease) .05s}
+.lmap__c.on .lmap__st{opacity:1}
+.lmap__st .rd{stroke:var(--espresso);stroke-linecap:round;fill:none;
+  stroke-dasharray:400;stroke-dashoffset:400;transition:stroke-dashoffset .9s var(--ease)}
+.lmap__st .rd.a{stroke-width:5;opacity:.2}
+.lmap__st .rd.b{stroke-width:3.5;opacity:.16}
+.lmap__st .rd.c{stroke-width:1.4;opacity:.1}
+.lmap__c.on .rd{stroke-dashoffset:0}
+.lmap__c.on .rd.b{transition-delay:.12s}
+.lmap__c.on .rd.c{transition-delay:.22s}
+/* soft ivory scrim so the address stays readable over the open street plan */
+.lmap__c::after{content:"";position:absolute;inset:auto 0 0;height:56%;z-index:1;pointer-events:none;
+  opacity:0;transition:opacity .5s var(--ease) .1s;
+  background:linear-gradient(to top,rgba(245,240,234,.97) 26%,rgba(245,240,234,.74) 58%,transparent)}
+.lmap__c.on::after{opacity:1}
+.lmap__st .bl{fill:var(--espresso);opacity:0;transform-origin:center;
+  transition:opacity .5s var(--ease) .3s}
+.lmap__c.on .bl{opacity:.11}
+.lmap__pin{position:absolute;left:50%;top:44%;width:2rem;height:2rem;margin:-1rem 0 0 -1rem;z-index:2;
+  opacity:0;transform:translateY(-14px) scale(.5);pointer-events:none;
+  transition:opacity .4s var(--ease) .25s,transform .7s var(--spring) .25s}
+.lmap__c.on .lmap__pin{opacity:1;transform:none}
+.lmap__pin svg{width:100%;height:100%;filter:drop-shadow(0 6px 12px rgba(156,95,63,.45))}
+.lmap__pin path{fill:var(--copper)}
+.lmap__pin circle{fill:var(--ivory)}
+.lmap__top{position:absolute;inset:1.1rem 1.1rem auto;z-index:2;
+  display:flex;align-items:flex-start;justify-content:space-between}
+.lmap__ic{width:1.15rem;height:1.15rem;color:var(--copper-l);
+  transition:opacity .3s var(--ease),filter .3s var(--ease)}
+.lmap__c:hover .lmap__ic{filter:drop-shadow(0 0 7px rgba(192,133,96,.55))}
+.lmap__c.on .lmap__ic{opacity:0}
+.lmap__live{display:inline-flex;align-items:center;gap:.4rem;padding:.24rem .58rem;
+  border-radius:999px;background:rgba(255,255,255,.66);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  font:500 .55rem/1 'Montserrat',sans-serif;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);transition:transform .4s var(--spring)}
+.lmap__c:hover .lmap__live{transform:scale(1.06)}
+.lmap__live i{width:.36rem;height:.36rem;border-radius:50%;background:#5E8B60;
+  box-shadow:0 0 0 3px rgba(94,139,96,.18)}
+.lmap__live.shut i{background:var(--copper)}
+.lmap__s,.lmap__live.shut .lmap__o{display:none}
+.lmap__live.shut .lmap__s{display:inline}
+.lmap__bot{position:absolute;inset:auto 1.1rem 1.05rem;z-index:2}
+.lmap__bot h3{font-family:'Montserrat',sans-serif;font-size:.86rem;font-weight:500;
+  letter-spacing:-.01em;color:var(--espresso);transition:transform .5s var(--spring)}
+.lmap__c:hover .lmap__bot h3{transform:translateX(4px)}
+.lmap__co,.lmap__go{display:block;opacity:0;max-height:0;overflow:hidden;
+  transition:opacity .3s var(--ease),max-height .5s var(--ease),transform .5s var(--spring)}
+.lmap__co{font:400 .68rem/1.5 ui-monospace,'SF Mono',Menlo,monospace;color:var(--muted);
+  transform:translateY(-6px)}
+.lmap__go{margin-top:.35rem;font:500 .62rem/1 'Montserrat',sans-serif;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--copper);text-decoration:none;transform:translateY(-6px)}
+.lmap__go:hover{color:var(--espresso)}
+.lmap__c.on .lmap__co,.lmap__c.on .lmap__go{opacity:1;max-height:3rem;transform:none}
+.lmap__c.on .lmap__co{transition-delay:.1s}
+.lmap__c.on .lmap__go{transition-delay:.18s}
+.lmap__ul{display:block;height:1px;margin-top:.5rem;transform:scaleX(.28);transform-origin:0 50%;
+  background:linear-gradient(90deg,rgba(192,133,96,.75),rgba(192,133,96,.3),transparent);
+  transition:transform .5s var(--ease)}
+.lmap__c:hover .lmap__ul,.lmap__c.on .lmap__ul{transform:scaleX(1)}
+.lmap__hint{margin-top:.55rem;font:500 .58rem/1 'Montserrat',sans-serif;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted);opacity:0;transform:translateY(4px);
+  transition:opacity .3s var(--ease),transform .3s var(--ease)}
+.lmap:hover .lmap__hint{opacity:.75;transform:none}
+.lmap__c.on ~ .lmap__hint{opacity:0}
+@media(max-width:620px){.lmap__c.on{width:min(88vw,22.5rem)}}
+@media(prefers-reduced-motion:reduce){.lmap__c,.lmap__st,.rd,.bl,.lmap__pin{transition-duration:1ms}}
 
 /* ---- glass social dock ---- */
 .dk__k{display:block;margin-top:2.6rem}
