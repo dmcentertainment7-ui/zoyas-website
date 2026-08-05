@@ -1,3 +1,5 @@
+.calc{align-self:start}
+.calc .label::before{display:none}
 
 :root{
   --ivory:#F5F0EA; --espresso:#453B36; --blush:#E7C6C2; --rose:#EFD9D5;
