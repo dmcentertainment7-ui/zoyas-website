@@ -178,7 +178,25 @@ header{position:fixed;top:0;left:0;right:0;z-index:90;padding:.85rem var(--gutte
 .wordmark{display:inline-flex;flex-direction:column;line-height:1.05;text-align:center;color:var(--espresso)}
 .wm-name{font-family:'Bodoni Moda',Georgia,serif;font-size:21px;letter-spacing:.115em;text-indent:.115em}
 .wm-sub{font-family:'Bodoni Moda',Georgia,serif;font-size:6.6px;letter-spacing:.42em;text-indent:.42em;margin-top:2px}
-header nav ul{display:flex;gap:1.5rem;list-style:none;font-size:.82rem}
+header nav ul{display:flex;flex-wrap:nowrap;gap:1.5rem;list-style:none;font-size:.82rem}
+/* nothing in the bar may wrap: a wrapped link turns the pill into a tall box */
+header nav ul a,.hdr-right .btn,.lang button,.bar>a:first-child{white-space:nowrap}
+header{flex-wrap:nowrap}
+.bar,.hdr-right{flex:0 1 auto;min-width:0}
+/* between 1080 and 1360 the full header no longer fits at ease, so tighten
+   it rather than let flexbox squeeze the nav into wrapping */
+@media(max-width:1360px){
+  header nav ul{gap:.85rem;font-size:.76rem}
+  header nav ul a{padding:.36rem .58rem}
+  .bar{gap:1rem;padding:.5rem 1.05rem}
+  .hdr-right{gap:.4rem}
+  .dkh{padding:.2rem;gap:.05rem}
+  .dkh .dk__s{width:1.8rem;height:1.8rem;border-radius:.58rem}
+  .dkh .dk__s svg{width:.92rem;height:.92rem}
+  .dkh .dk__i{padding:.14rem}
+  .lang button{padding:.36rem .58rem;font-size:.62rem}
+  .hdr-right .btn{padding-left:1.1rem;padding-right:1.1rem;font-size:.66rem}
+}
 header nav a{color:var(--espresso);opacity:.78;transition:opacity .4s var(--ease)}
 header nav a:hover{opacity:1}
 .lang{position:relative;display:flex;border-radius:999px;padding:.28rem}
