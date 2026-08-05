@@ -394,6 +394,10 @@ header nav a:hover{opacity:1}
 .mb__lead{margin-top:3.4rem;padding:2rem 1.8rem;border-radius:1.5rem;text-align:center}
 .mb__lead h3{font-family:'Bodoni Moda',Georgia,serif;font-style:italic;font-weight:400;
   font-size:clamp(1.3rem,1.1rem+.7vw,1.8rem);color:var(--espresso)}
+.ctarow{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem;align-items:center}
+.ctarow .btn{justify-content:center}
+@media(max-width:520px){.ctarow{flex-direction:column;align-items:stretch}}
+
 .mb__form{display:grid;gap:.6rem;margin-top:1.4rem;
   grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:720px){.mb__form{grid-template-columns:1fr}}
@@ -677,8 +681,17 @@ footer .tag{color:rgba(245,240,234,.62);font-size:.82rem;margin-top:1rem;max-inl
 .tmq figcaption{margin-top:1.6rem;font:500 var(--t-label)/1.6 'Montserrat',sans-serif;
   letter-spacing:.2em;text-transform:uppercase;color:var(--copper)}
 .tmq figcaption span{display:block;letter-spacing:.12em;color:var(--muted);text-transform:none;font-weight:400}
+/* keyboard users land here first; it stays off-screen until focused */
+.skip{position:absolute;left:-9999px;top:0;z-index:10001;padding:.85rem 1.4rem;
+  border-radius:0 0 999px 0;background:var(--copper);color:#fff;font-size:.82rem;
+  letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
+.skip:focus{left:0}
+
 .tmdots{display:flex;gap:.55rem;margin-top:2.2rem}
-.tmdots button{width:2.2rem;height:2px;border:0;padding:0;cursor:pointer;background:var(--rule-2);
+/* the visible dash is 2px, but the button itself keeps a 24px tap target
+   (WCAG 2.2 SC 2.5.8) via transparent padding and a background-clip trick. */
+.tmdots button{width:2.2rem;height:24px;border:0;padding:11px 0;cursor:pointer;
+  background:var(--rule-2);background-clip:content-box;
   transition:background .5s var(--ease)}
 .tmdots button[aria-selected="true"]{background:var(--copper)}
 .tmstars{font-size:.9rem;letter-spacing:.3em;color:var(--copper);margin-bottom:1.2rem}

@@ -248,7 +248,8 @@
       if (!e.relatedTarget && e.clientY <= 0) open();
     });
 
-    document.getElementById('zwf').addEventListener('submit', function(e){
+    var zwf = document.getElementById('zwf');
+    if (zwf) zwf.addEventListener('submit', function(e){
       e.preventDefault();
       var f = document.getElementById('zwmail'), v = f.value.trim();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v)){ f.focus(); return; }
@@ -314,8 +315,12 @@
       b.addEventListener('click', function(){ setCycle(b.dataset.cycle); });
     });
   }
-  if (mbForm){
-    var mbTier = document.getElementById('mbtier'),
+  /* Picking a tier drives whichever capture is live: the MailerLite form when
+     one is connected, otherwise the prefilled text link. */
+  var mbSms = document.getElementById('mbsms');
+  if (mbForm || mbSms){
+    var mbTarget = mbForm || mbSms.closest('.ctarow') || mbSms,
+        mbTier = document.getElementById('mbtier'),
         mbPick = document.getElementById('mbpick'),
         mbOk   = document.getElementById('mbok');
     document.querySelectorAll('.mp__cta').forEach(function(btn){
@@ -326,14 +331,15 @@
         btn.classList.add('on');
         if (mbTier) mbTier.value = btn.dataset.tier;
         if (mbPick) mbPick.textContent = name;
-        mbForm.scrollIntoView({block: 'center', behavior: 'smooth'});
-        var first = mbForm.querySelector('input[type=text]');
+        if (mbSms) mbSms.href = mbSms.href.split('?')[0] + '?&body=' +
+          encodeURIComponent("Hi Zoya's - I'd like to join the membership waitlist for the "
+                             + name + " plan.");
+        mbTarget.scrollIntoView({block: 'center', behavior: 'smooth'});
+        var first = mbForm && mbForm.querySelector('input[type=text]');
         if (first) setTimeout(function(){ first.focus({preventScroll: true}); }, 500);
       });
     });
-    mbForm.addEventListener('submit', function(ev){
-      /* until the mailing list is connected there is nowhere to post to, so
-         hand the visitor straight to the phone rather than swallow the lead */
+    if (mbForm) mbForm.addEventListener('submit', function(ev){
       if (!mbForm.getAttribute('action')){
         ev.preventDefault();
         if (mbOk) mbOk.classList.add('on');
