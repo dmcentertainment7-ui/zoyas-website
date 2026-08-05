@@ -186,13 +186,14 @@ header{flex-wrap:nowrap}
 /* between 1080 and 1360 the full header no longer fits at ease, so tighten
    it rather than let flexbox squeeze the nav into wrapping */
 @media(max-width:1360px){
+  :root{--hdr-h:3.625rem}
   header nav ul{gap:.85rem;font-size:.76rem}
   header nav ul a{padding:.36rem .58rem}
   .bar{gap:1rem;padding:.5rem 1.05rem}
   .hdr-right{gap:.4rem}
   .dkh{padding:.2rem;gap:.05rem}
-  .dkh .dk__s{width:1.8rem;height:1.8rem;border-radius:.58rem}
-  .dkh .dk__s svg{width:.92rem;height:.92rem}
+  .dkh .dk__s{width:2rem;height:2rem;border-radius:.64rem}
+  .dkh .dk__s svg{width:1rem;height:1rem}
   .dkh .dk__i{padding:.14rem}
   .lang button{padding:.36rem .58rem;font-size:.62rem}
   .hdr-right .btn{padding-left:1.1rem;padding-right:1.1rem;font-size:.66rem}
@@ -216,6 +217,9 @@ header nav a:hover{opacity:1}
              inset 0 -1px 2px rgba(69,59,54,.28);
   transform:translate3d(0,0,0);transform-origin:50% 50%;
   transition:transform .66s var(--spring)}
+/* the pane is now 60px tall, so inset the knob or it reads as a circle */
+.lang>.lang__p{top:.72rem;bottom:.72rem}
+.lang button{padding:.42rem .82rem}
 .lang.mn>.lang__p{transform:translate3d(100%,0,0)}
 .lang.go>.lang__p{animation:langFlow .66s var(--ease)}
 @keyframes langFlow{
@@ -413,6 +417,19 @@ header nav a:hover{opacity:1}
 .dk__k{display:block;margin-top:2.6rem}
 .dk{display:inline-flex;align-items:center;gap:.35rem;margin-top:.9rem;
   padding:.7rem;border-radius:1.6rem}
+/* every glass control in the header shares one height so the row lines up.
+   The bar keeps its own natural size; the others are matched to it. */
+:root{--hdr-h:3.75rem}
+header{align-items:center}
+.bar{min-height:var(--hdr-h)}
+.hdr-right{align-items:center}
+.dkh,.lang,.hdr-right .btn{height:var(--hdr-h)}
+.dkh,.lang{align-items:center}
+.hdr-right .btn{display:inline-flex;align-items:center;justify-content:center;
+  padding-top:0;padding-bottom:0}
+.dkh .dk__s{width:2.2rem;height:2.2rem}
+.dkh .dk__s svg{width:1.08rem;height:1.08rem}
+
 /* ---- compact variant that lives in the header bar ---- */
 .dkh{margin-top:0;gap:.1rem;padding:.26rem;border-radius:1.1rem}
 .dkh:hover{padding:.4rem;border-radius:1.3rem}
