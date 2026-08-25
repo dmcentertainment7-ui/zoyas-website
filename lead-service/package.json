@@ -1,0 +1,13 @@
+{
+  "name": "zoya-lead-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone lead-capture endpoint for zoyaswellnesscenter.com — replaces the n8n webhook so the booking form has no n8n dependency.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
