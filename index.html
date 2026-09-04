@@ -615,6 +615,16 @@
       msgEl.className = 'rq__msg err';
       return;
     }
+    // The first-visit code can only be emailed to an address we actually have.
+    var emailVal = (fd.get('email') || '').trim();
+    if (fd.get('email_offer') === '1' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+      msgEl.textContent = t(
+        'Add your email so we can send your 20% code, or untick that box.',
+        '20%-ийн кодоо и-мэйлээр авахын тулд и-мэйл хаягаа оруулна уу, эсвэл сонголтоо болиулна уу.'
+      );
+      msgEl.className = 'rq__msg err';
+      return;
+    }
 
     var btn = form.querySelector('.rq__go');
     btn.disabled = true;
