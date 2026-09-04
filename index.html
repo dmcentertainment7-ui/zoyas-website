@@ -325,6 +325,12 @@
           Text me about my appointment and occasional offers. Reply STOP any time.
         </span>
       </label>
+      <label class="rq__consent">
+        <input type="checkbox" name="email_offer" value="1">
+        <span data-i18n="rq_email_offer">
+          Email me my 20% first-visit code. One email, no mailing list.
+        </span>
+      </label>
 
       <button type="submit" class="btn solid rq__go" data-i18n="rq_send">Send request</button>
 
@@ -458,6 +464,7 @@
     rq_note: 'Бидний мэдэх ёстой зүйл байна уу? <em>(сонголтоор)</em>',
     rq_dep_none: 'Урьдчилгаагаа харахын тулд үйлчилгээгээ сонгоно уу.',
     rq_consent: 'Цаг захиалгын болон хааяа урамшууллын мессеж илгээхийг зөвшөөрч байна. Хүссэн үедээ STOP гэж бичнэ үү.',
+    rq_email_offer: 'Анхны айлчлалын 20%-ийн кодоо и-мэйлээр илгээнэ үү. Нэг л и-мэйл, захиалгат жагсаалт байхгүй.',
     rq_send: 'Хүсэлт илгээх',
     rq_fine: 'Энэ бол хүсэлт, баталгаажсан захиалга биш. Бид цагийг тань баталгаажуулж, урьдчилгааны найдвартай холбоос илгээнэ. 30% урьдчилгаа эмчилгээний үнээс хасагдана.'
   };
@@ -626,6 +633,7 @@
         language: isMN() ? 'mn' : 'en',
         note: (fd.get('note') || '').trim(),
         consent: fd.get('consent') === '1',
+        email_offer: fd.get('email_offer') === '1',
         company: fd.get('company') || ''
       })
     })
