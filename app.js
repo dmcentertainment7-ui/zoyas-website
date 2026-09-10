@@ -208,60 +208,7 @@
     addEventListener('keydown', function(e){ if (e.key === 'Escape') setMenu(false); });
   }
 
-  /* ---- email capture popup: 6s timer or exit intent, remembers the answer ---- */
-  (function(){
-    var ov = document.getElementById('zwov'), pop = document.getElementById('zwpop');
-    if (!ov || !pop) return;
-    var shown = false, lastFocus = null;
-    var put = function(k, v, days){ try{ localStorage.setItem(k, JSON.stringify(
-          {v: v, exp: Date.now() + days * 864e5})); }catch(e){} };
-    var get = function(k){ try{
-          var o = JSON.parse(localStorage.getItem(k) || 'null');
-          if (o && o.exp > Date.now()) return o.v;
-          localStorage.removeItem(k);
-        }catch(e){} return null; };
-    if (get('zwDismissed') || get('zwClaimed')) return;
-
-    var open = function(){
-      if (shown) return;
-      shown = true; lastFocus = document.activeElement;
-      ov.hidden = pop.hidden = false;
-      requestAnimationFrame(function(){ ov.classList.add('on'); pop.classList.add('on'); });
-      setTimeout(function(){ var m = document.getElementById('zwmail'); if (m) m.focus(); }, 400);
-    };
-    var close = function(days){
-      ov.classList.remove('on'); pop.classList.remove('on');
-      setTimeout(function(){ ov.hidden = pop.hidden = true; }, 400);
-      put('zwDismissed', 1, days || 3);
-      if (lastFocus && lastFocus.focus) lastFocus.focus();
-    };
-    [].forEach.call(pop.querySelectorAll('[data-zwclose]'), function(b){
-      b.addEventListener('click', function(){ close(3); });
-    });
-    ov.addEventListener('click', function(){ close(3); });
-    addEventListener('keydown', function(e){
-      if (e.key === 'Escape' && pop.classList.contains('on')) close(3);
-    });
-
-    setTimeout(open, 6000);
-    document.addEventListener('mouseout', function(e){
-      if (!e.relatedTarget && e.clientY <= 0) open();
-    });
-
-    var zwf = document.getElementById('zwf');
-    if (zwf) zwf.addEventListener('submit', function(e){
-      e.preventDefault();
-      var f = document.getElementById('zwmail'), v = f.value.trim();
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v)){ f.focus(); return; }
-      if (window.__ML){
-        var fd = new FormData();
-        fd.append('fields[email]', v);
-        fetch(window.__ML, {method:'POST', body: fd, mode:'no-cors'}).catch(function(){});
-      }
-      pop.classList.add('claimed');
-      put('zwClaimed', v, 60);
-    });
-  })();
+  /* email-capture popup now lives in /zoya-popup.js (Klaviyo) */
 
   /* ---- lash style accordion ---- */
   var xw = document.querySelector('.xpand');
